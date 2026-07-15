@@ -40,6 +40,15 @@
   tr:last-child td{border-bottom:none;}
   .empty{text-align:center; padding:60px 20px; color:#8A8065; background:#fff; border-radius:14px; border:1px solid var(--line);}
   .section-title{font-size:1.2rem; margin:34px 0 14px; color:var(--soil-deep);}
+  .status-select{
+    border-radius:100px; border:1.5px solid var(--line); padding:6px 10px; font-size:0.78rem;
+    font-weight:600; font-family:'Work Sans'; cursor:pointer; background:#fff; color:var(--ink);
+  }
+  .status-pending{background:#FDF0E4; border-color:#E8C7A2; color:#7A4A1E;}
+  .status-confirmed{background:#E7EDDD; border-color:#B9CBA0; color:var(--leaf-deep);}
+  .status-out-for-delivery{background:#E4EEFB; border-color:#A9C7EC; color:#1E4E8C;}
+  .status-delivered{background:#DEF5E4; border-color:#9FDCB2; color:#1E6B37;}
+  .status-cancelled{background:#FBE4E4; border-color:#EBA9A9; color:#8C1E1E;}
 </style>
 </head>
 <body>
@@ -86,6 +95,7 @@
       { label: "Orders This Month", value: month.length },
       { label: "Orders This Year", value: year.length },
       { label: "Total Orders (All Time)", value: orders.length },
+      { label: "Pending Orders", value: orders.filter(o => (o.status || 'Pending') === 'Pending').length },
     ];
     document.getElementById('statGrid').innerHTML = stats.map(s=>`
       <div class="stat"><b>${s.value}</b><span>${s.label}</span></div>
@@ -98,27 +108,40 @@
       wrap.innerHTML = `<div class="empty">No orders recorded in this browser yet.<br>Place a test order from the site to see it appear here.</div>`;
       return;
     }
-    const rows = [...orders].reverse().map(o=>{
+    const STATUSES = ['Pending','Confirmed','Out for Delivery','Delivered','Cancelled'];
+    const rows = [...orders].map((o, idx) => ({o, realIdx: idx})).reverse().map(({o, realIdx})=>{
       const d = new Date(o.timestamp);
       const itemsSummary = o.items.map(it => `${it.name}${it.variant?' ('+it.variant+')':''} — ${it.qty}kg`).join(', ');
+      const status = o.status || 'Pending';
+      const options = STATUSES.map(s => `<option value="${s}" ${s===status?'selected':''}>${s}</option>`).join('');
       return `<tr>
         <td>${d.toLocaleDateString('en-IN')}<br><span style="color:#8A8065;">${d.toLocaleTimeString('en-IN')}</span></td>
         <td>${o.name}</td>
         <td>${itemsSummary}</td>
         <td>${fmtINR(o.total)}</td>
         <td>${o.paymentMethod || '-'}</td>
+        <td><select class="status-select status-${status.replace(/\s+/g,'-').toLowerCase()}" onchange="updateStatus(${realIdx}, this.value, this)">${options}</select></td>
       </tr>`;
     }).join('');
     wrap.innerHTML = `<table>
-      <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th></tr></thead>
+      <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
+  }
+
+  function updateStatus(orderIndex, newStatus, selectEl){
+    const orders = getOrders();
+    if(!orders[orderIndex]) return;
+    orders[orderIndex].status = newStatus;
+    localStorage.setItem('vprOrders', JSON.stringify(orders));
+    selectEl.className = 'status-select status-' + newStatus.replace(/\s+/g,'-').toLowerCase();
+    renderStats(orders);
   }
 
   function downloadCSV(){
     const orders = getOrders();
     if(orders.length === 0){ alert('No orders to export yet.'); return; }
-    const header = ['Order ID','Date','Time','Customer Name','Address','Items','Total (INR)','Payment Method'];
+    const header = ['Order ID','Date','Time','Customer Name','Address','Items','Total (INR)','Payment Method','Status'];
     const rows = orders.map(o=>{
       const d = new Date(o.timestamp);
       const itemsSummary = o.items.map(it => `${it.name}${it.variant?' ('+it.variant+')':''} - ${it.qty}kg @ ${it.price}/kg`).join(' | ');
@@ -130,7 +153,8 @@
         (o.address||'').replace(/\n/g,' '),
         itemsSummary,
         o.total,
-        o.paymentMethod || ''
+        o.paymentMethod || '',
+        o.status || 'Pending'
       ];
     });
     const csvRows = [header, ...rows].map(r =>
