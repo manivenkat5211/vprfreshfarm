@@ -113,6 +113,12 @@
   .hstat span{font-size:0.78rem; color:#7A7059;}
 
   .hero-art{position:relative; height:420px;}
+  .hero-photo{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; border-radius:24px; z-index:2;
+    box-shadow: 0 20px 44px rgba(46,32,19,0.18);
+  }
+  .hero-fallback{width:100%; height:100%;}
   .field-band{
     position:absolute; bottom:0; left:-10%; width:120%; height:60%;
   }
@@ -338,6 +344,8 @@
       </div>
     </div>
     <div class="hero-art">
+      <img class="hero-photo" src="images/vprbck.jpeg" alt="VPR Fresh Farm" loading="lazy" onerror="this.style.display='none'">
+      <div class="hero-fallback">
       <svg viewBox="0 0 500 420" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
@@ -377,6 +385,7 @@
           <path d="M65 26 Q 70 18 66 12" stroke="#4B6B3A" stroke-width="3" fill="none"/>
         </g>
       </svg>
+      </div>
     </div>
   </div>
 </section>
@@ -458,8 +467,8 @@
         <a href="#products" class="btn btn-primary" style="background:var(--gold); color:var(--soil-deep);">Start an Order</a>
       </div>
       <div class="contact-details">
-        <div class="cdetail">📍 <span><b>Farm & Dispatch:</b> Add your village/town here</span></div>
-        <div class="cdetail">📞 <span><b>Phone / WhatsApp:</b> Add your number here</span></div>
+        <div class="cdetail">📍 <span><b>Farm & Dispatch:</b> 5/172-1, Chekkadinatham, Neeliyampatti, Musiri, Trichy Dt – 621208</span></div>
+        <div class="cdetail">📞 <span><b>Phone / WhatsApp:</b> 99444 61720</span></div>
         <div class="cdetail">🕐 <span><b>Order hours:</b> Add your hours here</span></div>
       </div>
     </div>
@@ -487,21 +496,21 @@
   <div class="drawer-foot" id="paymentStep" style="display:none;">
     <div class="drawer-total"><span>Amount to pay</span><span id="payTotal">₹0</span></div>
     <div style="text-align:center; margin:14px 0;">
-      <img id="qrImg" src="" alt="UPI QR Code" style="width:190px; height:190px; border-radius:14px; border:1.5px solid var(--line); background:#fff; padding:8px;">
-      <div style="font-size:0.8rem; color:#8A8065; margin-top:8px;">Scan with any UPI app, or tap below</div>
+      <img id="qrImg" src="images/manigpay.jpeg" alt="UPI QR Code" style="width:190px; height:190px; border-radius:14px; border:1.5px solid var(--line); background:#fff; padding:8px; object-fit:contain;">
+      <div style="font-size:0.78rem; color:#8A8065; margin-top:8px;">Scan with any UPI app — enter <b id="qrAmountHint">₹0</b> manually, or tap below to auto-fill the amount.</div>
     </div>
     <div class="field"><label>UPI ID</label><input id="upiIdShown" readonly></div>
     <a class="send-btn" id="upiPayBtn" href="#" style="background:var(--leaf-deep); text-decoration:none; margin-bottom:10px;">Pay via UPI App</a>
     <button class="send-btn" onclick="confirmAndSend()">I've Paid — Send Order on WhatsApp</button>
     <button class="di-remove" style="display:block; margin:12px auto 0;" onclick="backToCart()">← Back to cart</button>
-    <div class="drawer-note">This is a demo UPI ID for testing. Replace UPI_ID in the code with your real VPA before accepting real payments.</div>
+    <div class="drawer-note">Orders are saved on this device and can be tracked in the Order Dashboard.</div>
   </div>
 </div>
 
 <script>
   // ---- CONFIG ----
   const WHATSAPP_NUMBER = "919944461720"; // your number, with 91 country code
-  const UPI_ID = "vprfreshfarm@upi"; // DUMMY UPI ID — replace with your real UPI ID/VPA later
+  const UPI_ID = "9944461720@apl"; // your real UPI ID
   const UPI_PAYEE_NAME = "VPR Fresh Farm";
 
   const products = [
@@ -734,8 +743,8 @@
     document.getElementById('paymentStep').style.display = 'block';
     document.getElementById('payTotal').textContent = fmtINR(total);
     document.getElementById('upiIdShown').value = UPI_ID;
+    document.getElementById('qrAmountHint').textContent = fmtINR(total);
     const upiString = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${total}&cu=INR&tn=${encodeURIComponent('VPR Fresh Farm Order')}`;
-    document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiString)}`;
     document.getElementById('upiPayBtn').href = upiString;
   }
 
@@ -773,7 +782,8 @@
         lineTotal: cart[key].qty * cart[key].price
       })),
       total: total,
-      paymentMethod: 'UPI'
+      paymentMethod: 'UPI',
+      status: 'Pending'
     };
     saveOrderLocally(order);
 
