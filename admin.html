@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Dashboard — VPR Fresh Farm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --soil-deep:#2E2013; --leaf:#4B6B3A; --leaf-deep:#33492A; --leaf-pale:#E7EDDD;
+    --terracotta:#C1652F; --terracotta-deep:#A34F22; --wheat:#F3EBDA; --cream:#FBF7EE;
+    --ink:#2A2419; --line:rgba(42,36,25,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Work Sans',sans-serif; background:var(--cream); color:var(--ink); padding:32px 24px 80px;}
+  h1,h2{font-family:'Fraunces',serif; font-weight:600;}
+  .wrap{max-width:1080px; margin:0 auto;}
+  .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:12px;}
+  h1{font-size:1.9rem; color:var(--soil-deep);}
+  .backlink{font-size:0.88rem; color:var(--leaf-deep); text-decoration:underline;}
+  .warn{
+    background:#FDF0E4; border:1px solid #E8C7A2; color:#7A4A1E; font-size:0.85rem;
+    padding:12px 16px; border-radius:12px; margin:18px 0 30px;
+  }
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:36px;}
+  .stat{background:#fff; border:1px solid var(--line); border-radius:16px; padding:20px;}
+  .stat b{display:block; font-family:'Fraunces',serif; font-size:2rem; color:var(--terracotta-deep);}
+  .stat span{font-size:0.82rem; color:#7A7059;}
+  .actions{display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;}
+  .btn{
+    padding:11px 20px; border-radius:100px; font-weight:600; font-size:0.88rem;
+    border:none; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{background:var(--leaf-deep); color:#fff;}
+  .btn-danger{background:#fff; color:var(--terracotta-deep); border:1.5px solid var(--terracotta-deep);}
+  table{width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; border:1px solid var(--line);}
+  th,td{text-align:left; padding:12px 14px; font-size:0.85rem; border-bottom:1px solid var(--line);}
+  th{background:var(--wheat); font-weight:700; color:var(--soil-deep);}
+  tr:last-child td{border-bottom:none;}
+  .empty{text-align:center; padding:60px 20px; color:#8A8065; background:#fff; border-radius:14px; border:1px solid var(--line);}
+  .section-title{font-size:1.2rem; margin:34px 0 14px; color:var(--soil-deep);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Order Dashboard</h1>
+    <a class="backlink" href="index.html">← Back to site</a>
+  </div>
+  <div class="warn">
+    This dashboard reads orders saved in <b>this browser's local storage only</b>. It will show orders placed from this device/browser — it does not automatically collect orders customers place on their own phones. For that, you'd need a shared backend instead of local storage.
+  </div>
+
+  <div class="stat-grid" id="statGrid"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="downloadCSV()">⬇ Download CSV (Excel-compatible)</button>
+    <button class="btn btn-danger" onclick="clearOrders()">Clear all order data</button>
+  </div>
+
+  <div class="section-title">All Orders</div>
+  <div id="tableWrap"></div>
+</div>
+
+<script>
+  function getOrders(){
+    try{ return JSON.parse(localStorage.getItem('vprOrders')) || []; }catch(e){ return []; }
+  }
+
+  function fmtINR(n){ return "₹" + Number(n).toLocaleString('en-IN'); }
+
+  function isSameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+  function isSameMonth(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth(); }
+  function isSameYear(a,b){ return a.getFullYear()===b.getFullYear(); }
+
+  function renderStats(orders){
+    const now = new Date();
+    const today = orders.filter(o => isSameDay(new Date(o.timestamp), now));
+    const month = orders.filter(o => isSameMonth(new Date(o.timestamp), now));
+    const year = orders.filter(o => isSameYear(new Date(o.timestamp), now));
+    const totalRevenue = orders.reduce((s,o)=> s + (o.total||0), 0);
+
+    const stats = [
+      { label: "Orders Today", value: today.length },
+      { label: "Orders This Month", value: month.length },
+      { label: "Orders This Year", value: year.length },
+      { label: "Total Orders (All Time)", value: orders.length },
+    ];
+    document.getElementById('statGrid').innerHTML = stats.map(s=>`
+      <div class="stat"><b>${s.value}</b><span>${s.label}</span></div>
+    `).join('') + `<div class="stat" style="grid-column:1/-1;"><b>${fmtINR(totalRevenue)}</b><span>Total value of all orders recorded</span></div>`;
+  }
+
+  function renderTable(orders){
+    const wrap = document.getElementById('tableWrap');
+    if(orders.length === 0){
+      wrap.innerHTML = `<div class="empty">No orders recorded in this browser yet.<br>Place a test order from the site to see it appear here.</div>`;
+      return;
+    }
+    const rows = [...orders].reverse().map(o=>{
+      const d = new Date(o.timestamp);
+      const itemsSummary = o.items.map(it => `${it.name}${it.variant?' ('+it.variant+')':''} — ${it.qty}kg`).join(', ');
+      return `<tr>
+        <td>${d.toLocaleDateString('en-IN')}<br><span style="color:#8A8065;">${d.toLocaleTimeString('en-IN')}</span></td>
+        <td>${o.name}</td>
+        <td>${itemsSummary}</td>
+        <td>${fmtINR(o.total)}</td>
+        <td>${o.paymentMethod || '-'}</td>
+      </tr>`;
+    }).join('');
+    wrap.innerHTML = `<table>
+      <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  function downloadCSV(){
+    const orders = getOrders();
+    if(orders.length === 0){ alert('No orders to export yet.'); return; }
+    const header = ['Order ID','Date','Time','Customer Name','Address','Items','Total (INR)','Payment Method'];
+    const rows = orders.map(o=>{
+      const d = new Date(o.timestamp);
+      const itemsSummary = o.items.map(it => `${it.name}${it.variant?' ('+it.variant+')':''} - ${it.qty}kg @ ${it.price}/kg`).join(' | ');
+      return [
+        o.id,
+        d.toLocaleDateString('en-IN'),
+        d.toLocaleTimeString('en-IN'),
+        o.name,
+        (o.address||'').replace(/\n/g,' '),
+        itemsSummary,
+        o.total,
+        o.paymentMethod || ''
+      ];
+    });
+    const csvRows = [header, ...rows].map(r =>
+      r.map(field => `"${String(field).replace(/"/g,'""')}"`).join(',')
+    );
+    const csvContent = csvRows.join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `vpr-fresh-farm-orders-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function clearOrders(){
+    if(confirm('This will permanently delete all order data stored in this browser. Continue?')){
+      localStorage.removeItem('vprOrders');
+      refresh();
+    }
+  }
+
+  function refresh(){
+    const orders = getOrders();
+    renderStats(orders);
+    renderTable(orders);
+  }
+
+  refresh();
+</script>
+</body>
+</html>

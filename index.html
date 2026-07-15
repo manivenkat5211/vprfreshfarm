@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VPR Fresh Farm — Farm Fresh, Straight to You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --soil: #4A3524;
+    --soil-deep: #2E2013;
+    --leaf: #4B6B3A;
+    --leaf-deep: #33492A;
+    --leaf-pale: #E7EDDD;
+    --terracotta: #C1652F;
+    --terracotta-deep: #A34F22;
+    --wheat: #F3EBDA;
+    --wheat-warm: #EDE0C5;
+    --gold: #D9A441;
+    --cream: #FBF7EE;
+    --ink: #2A2419;
+    --line: rgba(42,36,25,0.12);
+    --shadow: 0 8px 24px rgba(46,32,19,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+  img,svg{display:block; max-width:100%;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,247,238,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{width:38px; height:38px;}
+  .brand-name{font-family:'Fraunces',serif; font-weight:700; font-size:1.25rem; color:var(--leaf-deep);}
+  .brand-sub{font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--terracotta-deep); font-weight:600;}
+  .navlinks{display:flex; gap:32px; font-size:0.92rem; font-weight:500;}
+  .navlinks a{text-decoration:none; color:var(--soil); position:relative; padding-bottom:4px;}
+  .navlinks a:after{content:""; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--terracotta); transition:width .25s;}
+  .navlinks a:hover:after{width:100%;}
+  .cart-pill{
+    display:flex; align-items:center; gap:8px;
+    background:var(--leaf-deep); color:var(--wheat);
+    border:none; border-radius:100px; padding:10px 18px;
+    font-family:'Work Sans'; font-weight:600; font-size:0.88rem;
+    cursor:pointer; transition:transform .2s, background .2s;
+  }
+  .cart-pill:hover{background:var(--soil-deep); transform:translateY(-1px);}
+  .cart-count{
+    background:var(--terracotta); color:#fff; border-radius:50%;
+    width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+    font-size:0.72rem; font-weight:700;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; overflow:hidden;
+    background: linear-gradient(180deg, #F6EFDD 0%, var(--wheat) 55%, var(--wheat-warm) 100%);
+    padding-top:64px;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:40px; align-items:center;
+    padding-bottom:40px;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--leaf-deep); font-weight:700; margin-bottom:18px;
+  }
+  .eyebrow:before{content:""; width:20px; height:2px; background:var(--terracotta); display:inline-block;}
+  .hero h1{
+    font-size:clamp(2.4rem, 4.2vw, 3.6rem); color:var(--soil-deep); line-height:1.04; margin-bottom:20px;
+  }
+  .hero h1 em{
+    font-style:italic; color:var(--terracotta);
+  }
+  .hero p.lede{
+    font-size:1.08rem; color:#5B5140; max-width:480px; margin-bottom:30px;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 26px; border-radius:100px; font-weight:600; font-size:0.95rem;
+    text-decoration:none; cursor:pointer; border:none; transition:all .2s;
+  }
+  .btn-primary{background:var(--terracotta); color:#fff;}
+  .btn-primary:hover{background:var(--terracotta-deep); transform:translateY(-2px);}
+  .btn-ghost{background:transparent; color:var(--soil-deep); border:1.5px solid var(--soil-deep);}
+  .btn-ghost:hover{background:var(--soil-deep); color:var(--wheat);}
+  .hero-stats{display:flex; gap:34px; margin-top:38px;}
+  .hstat b{display:block; font-family:'Fraunces',serif; font-size:1.5rem; color:var(--leaf-deep);}
+  .hstat span{font-size:0.78rem; color:#7A7059;}
+
+  .hero-art{position:relative; height:420px;}
+  .field-band{
+    position:absolute; bottom:0; left:-10%; width:120%; height:60%;
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{padding:88px 0;}
+  .section-head{max-width:620px; margin-bottom:48px;}
+  .section-head .eyebrow{margin-bottom:12px;}
+  .section-head h2{font-size:clamp(1.9rem,3vw,2.6rem); color:var(--soil-deep);}
+  .section-head p{color:#6B6350; margin-top:12px; font-size:1.02rem;}
+
+  .section.alt{background:var(--wheat);}
+  .section.deep{background:var(--soil-deep); color:var(--wheat);}
+  .section.deep .section-head h2{color:var(--wheat);}
+  .section.deep .section-head p{color:#C9BFA9;}
+
+  /* ---------- PRODUCT GRID ---------- */
+  .products-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:26px;
+  }
+  .pcard{
+    background:#fff; border-radius:20px; overflow:hidden;
+    box-shadow:var(--shadow); border:1px solid var(--line);
+    display:flex; flex-direction:column;
+    transition:transform .25s, box-shadow .25s;
+  }
+  .pcard:hover{transform:translateY(-4px); box-shadow:0 16px 34px rgba(46,32,19,0.16);}
+  .pcard-art{
+    aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+    padding:22px; position:relative; overflow:hidden;
+  }
+  .art-fallback{display:flex; align-items:center; justify-content:center; width:100%; height:100%;}
+  .art-photo{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; z-index:2;
+  }
+  .pcard-body{padding:20px 22px 24px; display:flex; flex-direction:column; gap:12px; flex:1;}
+  .pcard-tag{
+    font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;
+    color:var(--leaf-deep); background:var(--leaf-pale); padding:4px 10px; border-radius:100px;
+    width:fit-content;
+  }
+  .pcard h3{font-size:1.3rem; color:var(--soil-deep);}
+  .pcard .desc{font-size:0.88rem; color:#7A7059; flex:1;}
+  .pcard .price-row{
+    display:flex; align-items:baseline; gap:6px; margin-top:2px;
+  }
+  .price{font-family:'Fraunces',serif; font-weight:600; font-size:1.35rem; color:var(--terracotta-deep);}
+  .price-unit{font-size:0.8rem; color:#8A8065;}
+
+  .variant-row{display:flex; gap:8px; margin-top:2px;}
+  .variant-btn{
+    font-size:0.78rem; padding:6px 12px; border-radius:100px;
+    border:1.4px solid var(--line); background:#fff; color:var(--soil);
+    cursor:pointer; font-weight:600; transition:all .15s;
+  }
+  .variant-btn.active{background:var(--leaf-deep); border-color:var(--leaf-deep); color:#fff;}
+
+  .qty-row{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:6px; gap:10px;
+  }
+  .stepper{
+    display:flex; align-items:center; border:1.5px solid var(--line); border-radius:100px; overflow:hidden;
+  }
+  .stepper button{
+    width:36px; height:36px; border:none; background:var(--wheat); color:var(--soil-deep);
+    font-size:1.1rem; cursor:pointer; font-weight:700; transition:background .15s;
+  }
+  .stepper button:hover{background:var(--gold);}
+  .stepper input{
+    width:52px; text-align:center; border:none; font-weight:700; font-size:0.95rem;
+    font-family:'Work Sans'; color:var(--soil-deep); background:#fff;
+  }
+  .stepper input:focus{outline:none;}
+  .stepper-unit{font-size:0.72rem; color:#8A8065; padding-right:10px;}
+  .add-btn{
+    background:var(--leaf-deep); color:#fff; border:none; border-radius:100px;
+    padding:10px 18px; font-weight:600; font-size:0.85rem; cursor:pointer;
+    transition:background .2s;
+    white-space:nowrap;
+  }
+  .add-btn:hover{background:var(--soil-deep);}
+  .add-btn.added{background:var(--terracotta);}
+
+  /* ---------- WHY / VALUES ---------- */
+  .values-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px;}
+  .value{padding:8px 0;}
+  .value .vicon{width:48px; height:48px; margin-bottom:16px;}
+  .value h3{font-size:1.08rem; margin-bottom:8px; color:var(--soil-deep);}
+  .value p{font-size:0.9rem; color:#6B6350;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:30px; margin-top:10px;}
+  .step{position:relative; padding:28px 24px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); border-radius:18px;}
+  .step .snum{font-family:'Fraunces',serif; font-size:2.2rem; color:var(--gold); margin-bottom:12px; display:block;}
+  .step h3{color:var(--wheat); font-size:1.1rem; margin-bottom:8px;}
+  .step p{color:#C9BFA9; font-size:0.9rem;}
+
+  /* ---------- CART DRAWER ---------- */
+  .drawer-overlay{
+    position:fixed; inset:0; background:rgba(30,22,12,0.42);
+    opacity:0; pointer-events:none; transition:opacity .3s; z-index:90;
+  }
+  .drawer-overlay.open{opacity:1; pointer-events:auto;}
+  .drawer{
+    position:fixed; top:0; right:-420px; width:400px; max-width:92vw; height:100%;
+    background:var(--cream); z-index:95; box-shadow:-10px 0 30px rgba(0,0,0,0.15);
+    transition:right .35s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column;
+  }
+  .drawer.open{right:0;}
+  .drawer-head{
+    padding:24px 24px 18px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .drawer-head h3{font-size:1.3rem; color:var(--soil-deep);}
+  .drawer-close{background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--soil);}
+  .drawer-items{flex:1; overflow-y:auto; padding:14px 24px;}
+  .drawer-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-bottom:1px solid var(--line); gap:10px;
+  }
+  .di-name{font-weight:600; font-size:0.95rem; color:var(--soil-deep);}
+  .di-sub{font-size:0.78rem; color:#8A8065; margin-top:2px;}
+  .di-remove{background:none; border:none; color:var(--terracotta); font-size:0.78rem; cursor:pointer; text-decoration:underline; margin-top:4px;}
+  .di-price{font-weight:700; color:var(--terracotta-deep); font-family:'Fraunces',serif; font-size:1.05rem; white-space:nowrap;}
+  .drawer-empty{text-align:center; padding:60px 20px; color:#8A8065; font-size:0.92rem;}
+  .drawer-foot{padding:20px 24px 26px; border-top:1px solid var(--line);}
+  .drawer-total{display:flex; justify-content:space-between; font-size:1.05rem; font-weight:700; margin-bottom:16px; color:var(--soil-deep);}
+  .field{margin-bottom:12px;}
+  .field label{font-size:0.78rem; font-weight:600; color:var(--soil); display:block; margin-bottom:5px;}
+  .field input, .field textarea{
+    width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px;
+    font-family:'Work Sans'; font-size:0.9rem; background:#fff;
+  }
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--leaf);}
+  .send-btn{
+    width:100%; background:#25D366; color:#fff; border:none; border-radius:100px;
+    padding:14px; font-weight:700; font-size:0.95rem; cursor:pointer; margin-top:6px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .send-btn:hover{background:#1EBE5A;}
+  .send-btn:disabled{background:#c9c2b0; cursor:not-allowed;}
+  .drawer-note{font-size:0.72rem; color:#9A9078; margin-top:10px; text-align:center;}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  .contact-card{
+    background:var(--leaf-deep); border-radius:24px; padding:56px;
+    display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;
+    color:var(--wheat);
+  }
+  .contact-card h2{color:#fff; font-size:2rem; margin-bottom:14px;}
+  .contact-card p{color:#D9E0CC; margin-bottom:24px; max-width:440px;}
+  .contact-details{display:flex; flex-direction:column; gap:14px;}
+  .cdetail{display:flex; align-items:center; gap:12px; font-size:0.95rem;}
+  .cdetail b{font-weight:600;}
+  footer{padding:34px 0; text-align:center; color:#8A8065; font-size:0.82rem;}
+
+  @media (max-width: 900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-art{height:280px; order:-1;}
+    .products-grid{grid-template-columns:repeat(2,1fr);}
+    .values-grid{grid-template-columns:repeat(2,1fr);}
+    .steps{grid-template-columns:1fr;}
+    .contact-card{grid-template-columns:1fr; padding:36px 26px;}
+    .navlinks{display:none;}
+  }
+  @media (max-width: 540px){
+    .products-grid{grid-template-columns:1fr;}
+    .values-grid{grid-template-columns:1fr;}
+    .hero-stats{gap:22px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M24 44C24 44 10 34 10 22C10 13 16 8 24 8C32 8 38 13 38 22C38 34 24 44 24 44Z" fill="#4B6B3A"/>
+        <path d="M24 44V20" stroke="#F3EBDA" stroke-width="2" stroke-linecap="round"/>
+        <path d="M24 26C24 26 18 24 17 18C22 18 24 22 24 26Z" fill="#7A9D54"/>
+        <path d="M24 30C24 30 30 28 31 22C26 22 24 26 24 30Z" fill="#7A9D54"/>
+      </svg>
+      <div>
+        <div class="brand-name">VPR Fresh Farm</div>
+        <div class="brand-sub">Farm to Door</div>
+      </div>
+    </div>
+    <div class="navlinks">
+      <a href="#products">Produce</a>
+      <a href="#why">Why Us</a>
+      <a href="#how">How It Works</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="cart-pill" onclick="openDrawer()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 3H5L5.4 5M5.4 5H21L18 13H7M5.4 5L7 13M7 13L5.6 16.2C5.2 17 5.8 18 6.7 18H18M9 21C9.6 21 10 20.6 10 20C10 19.4 9.6 19 9 19C8.4 19 8 19.4 8 20C8 20.6 8.4 21 9 21ZM18 21C18.6 21 19 20.6 19 20C19 19.4 18.6 19 18 19C17.4 19 17 19.4 17 20C17 20.6 17.4 21 18 21Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Order <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Small Batch · Field Fresh</div>
+      <h1>Real produce,<br>picked <em>this week</em>,<br>not last season.</h1>
+      <p class="lede">VPR Fresh Farm delivers small onion, brinjal, groundnut, red maize, tomato and turmeric straight from the field — no middle warehouses, no wax, no wait.</p>
+      <div class="hero-ctas">
+        <a href="#products" class="btn btn-primary">Browse Produce</a>
+        <a href="#how" class="btn btn-ghost">How Ordering Works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><b>6</b><span>Products in season</span></div>
+        <div class="hstat"><b>0</b><span>Middlemen</span></div>
+        <div class="hstat"><b>24h</b><span>Field to order</span></div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 500 420" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F6EFDD"/>
+            <stop offset="100%" stop-color="#EFE3C8"/>
+          </linearGradient>
+        </defs>
+        <rect width="500" height="420" fill="url(#sky)" opacity="0"/>
+        <circle cx="400" cy="70" r="46" fill="#D9A441" opacity="0.85"/>
+        <path d="M0 420 L0 300 Q 60 260 120 290 T 240 280 T 360 300 T 500 270 L500 420 Z" fill="#7A9D54" opacity="0.55"/>
+        <path d="M0 420 L0 340 Q 70 310 150 330 T 300 320 T 500 330 L500 420 Z" fill="#4B6B3A"/>
+        <!-- rows of crops -->
+        <g stroke="#33492A" stroke-width="3" stroke-linecap="round">
+          <path d="M20 400 Q 100 385 180 400"/>
+          <path d="M20 380 Q 100 365 180 380"/>
+          <path d="M220 400 Q 300 385 380 400"/>
+          <path d="M220 380 Q 300 365 380 380"/>
+          <path d="M420 400 Q 460 392 500 400"/>
+        </g>
+        <!-- little plants -->
+        <g fill="#C1652F">
+          <circle cx="70" cy="392" r="6"/>
+          <circle cx="140" cy="392" r="6"/>
+          <circle cx="270" cy="392" r="6"/>
+          <circle cx="340" cy="392" r="6"/>
+        </g>
+        <!-- basket -->
+        <g transform="translate(190,230)">
+          <path d="M10 60 L100 60 L92 110 Q55 122 18 110 Z" fill="#A3703F"/>
+          <path d="M10 60 L100 60" stroke="#7A4E28" stroke-width="4"/>
+          <path d="M25 60 Q 55 20 85 60" fill="none" stroke="#7A4E28" stroke-width="5"/>
+          <circle cx="45" cy="48" r="16" fill="#C1652F"/>
+          <circle cx="65" cy="44" r="18" fill="#D9A441"/>
+          <circle cx="55" cy="60" r="15" fill="#8E4A9C" opacity="0.85"/>
+          <circle cx="75" cy="60" r="13" fill="#B23A2E"/>
+          <path d="M45 32 Q 48 24 44 18" stroke="#4B6B3A" stroke-width="3" fill="none"/>
+          <path d="M65 26 Q 70 18 66 12" stroke="#4B6B3A" stroke-width="3" fill="none"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Today's Produce</div>
+      <h2>Pick what you need, by the kilo.</h2>
+      <p>Set the quantity for each item and add it to your order. Prices are per kilogram unless noted.</p>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<section class="section alt" id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Why VPR Fresh Farm</div>
+      <h2>Grown honestly. Sold directly.</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value">
+        <svg class="vicon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#E7EDDD"/><path d="M16 26C16 20 20 16 24 16C28 16 32 20 32 26" stroke="#4B6B3A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M24 16V30" stroke="#4B6B3A" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <h3>No chemicals to hide</h3>
+        <p>Produce grown the way it's meant to be — sun, soil, and time, not shortcuts.</p>
+      </div>
+      <div class="value">
+        <svg class="vicon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#E7EDDD"/><path d="M14 24H34M28 18L34 24L28 30" stroke="#C1652F" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Direct from field</h3>
+        <p>You're buying straight from the farm — no storage warehouses, no resellers.</p>
+      </div>
+      <div class="value">
+        <svg class="vicon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#E7EDDD"/><path d="M24 14V24L30 28" stroke="#D9A441" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Cut close to order day</h3>
+        <p>We harvest against real orders, not guesswork, so nothing sits around losing flavour.</p>
+      </div>
+      <div class="value">
+        <svg class="vicon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#E7EDDD"/><path d="M18 30L24 18L30 30" stroke="#4B6B3A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 26H28" stroke="#4B6B3A" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <h3>You set the quantity</h3>
+        <p>Order half a kilo or fifty — the amount is always yours to decide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section deep" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">How It Works</div>
+      <h2>Three steps, no account needed.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="snum">01</span>
+        <h3>Choose your produce</h3>
+        <p>Browse the day's items and set the quantity in kilos for each one you want.</p>
+      </div>
+      <div class="step">
+        <span class="snum">02</span>
+        <h3>Review your order</h3>
+        <p>Open the order drawer to see everything you've picked and the running total.</p>
+      </div>
+      <div class="step">
+        <span class="snum">03</span>
+        <h3>Send it to us</h3>
+        <p>Add your name and address, then send the order straight to our WhatsApp to confirm.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="wrap">
+    <div class="contact-card">
+      <div>
+        <h2>Questions before you order?</h2>
+        <p>Reach out directly — we're happy to talk quantities, bulk orders, or delivery areas.</p>
+        <a href="#products" class="btn btn-primary" style="background:var(--gold); color:var(--soil-deep);">Start an Order</a>
+      </div>
+      <div class="contact-details">
+        <div class="cdetail">📍 <span><b>Farm & Dispatch:</b> Add your village/town here</span></div>
+        <div class="cdetail">📞 <span><b>Phone / WhatsApp:</b> Add your number here</span></div>
+        <div class="cdetail">🕐 <span><b>Order hours:</b> Add your hours here</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 VPR Fresh Farm. Grown with care, sold direct. · <a href="admin.html" style="text-decoration:underline;">Order Dashboard (owner)</a></div>
+</footer>
+
+<!-- Cart Drawer -->
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Your Order</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-foot" id="cartStep">
+    <div class="drawer-total"><span>Total</span><span id="drawerTotal">₹0</span></div>
+    <div class="field"><label>Your name</label><input id="custName" placeholder="e.g. Karthik"></div>
+    <div class="field"><label>Delivery address</label><textarea id="custAddress" rows="2" placeholder="Street, village, town"></textarea></div>
+    <button class="send-btn" id="sendBtn" style="background:var(--terracotta);" onclick="goToPayment()" disabled>Proceed to Payment</button>
+  </div>
+  <div class="drawer-foot" id="paymentStep" style="display:none;">
+    <div class="drawer-total"><span>Amount to pay</span><span id="payTotal">₹0</span></div>
+    <div style="text-align:center; margin:14px 0;">
+      <img id="qrImg" src="" alt="UPI QR Code" style="width:190px; height:190px; border-radius:14px; border:1.5px solid var(--line); background:#fff; padding:8px;">
+      <div style="font-size:0.8rem; color:#8A8065; margin-top:8px;">Scan with any UPI app, or tap below</div>
+    </div>
+    <div class="field"><label>UPI ID</label><input id="upiIdShown" readonly></div>
+    <a class="send-btn" id="upiPayBtn" href="#" style="background:var(--leaf-deep); text-decoration:none; margin-bottom:10px;">Pay via UPI App</a>
+    <button class="send-btn" onclick="confirmAndSend()">I've Paid — Send Order on WhatsApp</button>
+    <button class="di-remove" style="display:block; margin:12px auto 0;" onclick="backToCart()">← Back to cart</button>
+    <div class="drawer-note">This is a demo UPI ID for testing. Replace UPI_ID in the code with your real VPA before accepting real payments.</div>
+  </div>
+</div>
+
+<script>
+  // ---- CONFIG ----
+  const WHATSAPP_NUMBER = "919944461720"; // your number, with 91 country code
+  const UPI_ID = "vprfreshfarm@upi"; // DUMMY UPI ID — replace with your real UPI ID/VPA later
+  const UPI_PAYEE_NAME = "VPR Fresh Farm";
+
+  const products = [
+    {
+      id: "onion",
+      name: "Small Onion",
+      tag: "Bulbs",
+      desc: "Sambar onions, hand-sorted. Choose fresh raw stock or cured old stock for longer shelf life.",
+      price: 60,
+      variants: ["Raw", "Old"],
+      color1: "#C1652F", color2: "#8E4A9C",
+      icon: (c1,c2)=>`<svg viewBox="0 0 140 140" width="120" height="120">
+        <ellipse cx="70" cy="85" rx="38" ry="34" fill="${c2}"/>
+        <ellipse cx="70" cy="85" rx="38" ry="34" fill="none" stroke="#6b3760" stroke-width="1.5" opacity="0.4"/>
+        <path d="M70 51 Q 60 30 66 12" stroke="#4B6B3A" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M70 51 Q 80 28 76 8" stroke="#7A9D54" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="52" cy="105" rx="26" ry="22" fill="${c1}"/>
+        <path d="M52 83 Q 44 65 48 50" stroke="#4B6B3A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>`
+    },
+    {
+      id: "brinjal",
+      name: "Brinjal",
+      tag: "Vegetable",
+      desc: "Glossy purple brinjal, firm and seed-light, picked young for the best bite.",
+      price: 40,
+      variants: null,
+      color1: "#5B3A87", color2: "#7A9D54",
+      icon: (c1,c2)=>`<svg viewBox="0 0 140 140" width="120" height="120">
+        <path d="M70 30 C40 40 30 75 45 105 C55 122 85 122 95 105 C110 75 100 40 70 30 Z" fill="${c1}"/>
+        <ellipse cx="55" cy="55" rx="10" ry="18" fill="#ffffff" opacity="0.15"/>
+        <path d="M70 30 C64 20 76 12 70 4" stroke="${c2}" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M60 32 L80 32 L86 22 L54 22 Z" fill="${c2}"/>
+      </svg>`
+    },
+    {
+      id: "groundnut",
+      name: "Groundnut",
+      tag: "Legume",
+      desc: "Raw farm groundnut, sun-dried in the shell, sorted for size and weight.",
+      price: 90,
+      variants: null,
+      color1: "#B98A4E", color2: "#8A6738",
+      icon: (c1,c2)=>`<svg viewBox="0 0 140 140" width="120" height="120">
+        <path d="M55 40 C40 45 38 65 48 72 C38 79 40 100 58 102 C72 104 82 92 78 78 C90 74 92 52 78 44 C68 38 62 36 55 40 Z" fill="${c1}"/>
+        <path d="M60 70 Q 66 72 70 70" stroke="${c2}" stroke-width="2.5" fill="none" opacity="0.6"/>
+        <path d="M50 55 Q 56 58 60 55" stroke="${c2}" stroke-width="2" fill="none" opacity="0.5"/>
+        <path d="M62 88 Q 68 90 72 87" stroke="${c2}" stroke-width="2" fill="none" opacity="0.5"/>
+      </svg>`
+    },
+    {
+      id: "maize",
+      name: "Red Maize",
+      tag: "Grain",
+      desc: "Deep red kernel maize, dried on the cob, sold loose or as whole cobs.",
+      price: 45,
+      variants: null,
+      color1: "#8B2C1E", color2: "#D9A441",
+      icon: (c1,c2)=>`<svg viewBox="0 0 140 140" width="120" height="120">
+        <ellipse cx="70" cy="75" rx="26" ry="46" fill="${c2}" opacity="0.3"/>
+        <g fill="${c1}">
+          ${Array.from({length:24}).map((_,i)=>{
+            const row = Math.floor(i/4), col = i%4;
+            const x = 48 + col*13;
+            const y = 34 + row*14 + (col%2===0?0:7);
+            return `<circle cx="${x}" cy="${y}" r="5.5"/>`;
+          }).join('')}
+        </g>
+        <path d="M70 120 Q 55 128 46 122" stroke="#4B6B3A" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M70 120 Q 85 128 94 122" stroke="#7A9D54" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </svg>`
+    },
+    {
+      id: "tomato",
+      name: "Tomato",
+      tag: "Vegetable",
+      desc: "Vine-ripened, firm-skinned tomatoes picked at peak colour, not gassed.",
+      price: 35,
+      variants: null,
+      color1: "#C1382A", color2: "#4B6B3A",
+      icon: (c1,c2)=>`<svg viewBox="0 0 140 140" width="120" height="120">
+        <circle cx="70" cy="80" r="38" fill="${c1}"/>
+        <ellipse cx="58" cy="65" rx="10" ry="7" fill="#ffffff" opacity="0.18"/>
+        <path d="M70 42 L60 30 M70 42 L70 26 M70 42 L80 30" stroke="${c2}" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="70" cy="44" r="7" fill="${c2}"/>
+      </svg>`
+    },
+    {
+      id: "turmeric",
+      name: "Turmeric",
+      tag: "Root · Raw",
+      desc: "Raw turmeric fingers, high colour, straight from the rhizome bed.",
+      price: 70,
+      variants: null,
+      color1: "#D9A441", color2: "#8A6738",
+      icon: (c1,c2)=>`<svg viewBox="0 0 140 140" width="120" height="120">
+        <path d="M45 95 Q 35 75 50 60 Q 60 50 55 40 Q 68 45 68 60 Q 80 55 85 68 Q 95 78 85 92 Q 75 105 60 100 Q 50 105 45 95 Z" fill="${c1}"/>
+        <path d="M55 40 Q 58 55 55 65" stroke="${c2}" stroke-width="2" fill="none" opacity="0.5"/>
+        <path d="M68 60 Q 72 72 68 82" stroke="${c2}" stroke-width="2" fill="none" opacity="0.5"/>
+        <path d="M40 60 Q 30 50 34 38" stroke="#4B6B3A" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </svg>`
+    }
+  ];
+
+  const cart = {}; // key: id[:variant] -> {name, variant, qty, price}
+
+  function fmtINR(n){ return "₹" + n.toLocaleString('en-IN'); }
+
+  function renderProducts(){
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = products.map(p => {
+      const variantHtml = p.variants ? `
+        <div class="variant-row" id="variants-${p.id}">
+          ${p.variants.map((v,i)=>`<button class="variant-btn ${i===0?'active':''}" onclick="selectVariant('${p.id}','${v}',this)">${v}</button>`).join('')}
+        </div>` : '';
+      return `
+      <div class="pcard">
+        <div class="pcard-art" style="background:linear-gradient(160deg, var(--leaf-pale), var(--wheat));">
+          <div class="art-fallback">${p.icon(p.color1,p.color2)}</div>
+          <img class="art-photo" src="images/${p.id}.jpg" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="pcard-body">
+          <span class="pcard-tag">${p.tag}</span>
+          <h3>${p.name}</h3>
+          <p class="desc">${p.desc}</p>
+          ${variantHtml}
+          <div class="price-row"><span class="price">${fmtINR(p.price)}</span><span class="price-unit">/ kg</span></div>
+          <div class="qty-row">
+            <div class="stepper">
+              <button onclick="stepQty('${p.id}',-1)">−</button>
+              <input type="number" min="1" step="0.5" value="1" id="qty-${p.id}" onchange="clampQty('${p.id}')">
+              <button onclick="stepQty('${p.id}',1)">+</button>
+            </div>
+            <span class="stepper-unit">kg</span>
+            <button class="add-btn" id="add-${p.id}" onclick="addToCart('${p.id}')">Add</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const selectedVariant = {};
+  function selectVariant(id, v, btn){
+    selectedVariant[id] = v;
+    document.querySelectorAll(`#variants-${id} .variant-btn`).forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function stepQty(id, delta){
+    const input = document.getElementById(`qty-${id}`);
+    let val = parseFloat(input.value) || 1;
+    val = Math.max(0.5, +(val + delta).toFixed(1));
+    input.value = val;
+  }
+  function clampQty(id){
+    const input = document.getElementById(`qty-${id}`);
+    let val = parseFloat(input.value);
+    if(isNaN(val) || val < 0.5) val = 0.5;
+    input.value = val;
+  }
+
+  function addToCart(id){
+    const p = products.find(x=>x.id===id);
+    const qty = parseFloat(document.getElementById(`qty-${id}`).value) || 1;
+    const variant = p.variants ? (selectedVariant[id] || p.variants[0]) : null;
+    const key = variant ? `${id}:${variant}` : id;
+    cart[key] = {
+      name: p.name,
+      variant: variant,
+      qty: qty,
+      price: p.price
+    };
+    updateCartUI();
+    const btn = document.getElementById(`add-${id}`);
+    btn.textContent = "Added ✓";
+    btn.classList.add('added');
+    setTimeout(()=>{ btn.textContent = "Add"; btn.classList.remove('added'); }, 1200);
+  }
+
+  function removeFromCart(key){
+    delete cart[key];
+    updateCartUI();
+  }
+
+  function updateCartUI(){
+    const keys = Object.keys(cart);
+    document.getElementById('cartCount').textContent = keys.length;
+    const itemsEl = document.getElementById('drawerItems');
+    const sendBtn = document.getElementById('sendBtn');
+    if(keys.length === 0){
+      itemsEl.innerHTML = `<div class="drawer-empty">Your order is empty.<br>Add produce from the catalogue to get started.</div>`;
+      sendBtn.disabled = true;
+    } else {
+      itemsEl.innerHTML = keys.map(key=>{
+        const it = cart[key];
+        const lineTotal = it.qty * it.price;
+        return `<div class="drawer-item">
+          <div>
+            <div class="di-name">${it.name}${it.variant ? ' · '+it.variant : ''}</div>
+            <div class="di-sub">${it.qty} kg × ${fmtINR(it.price)}</div>
+            <button class="di-remove" onclick="removeFromCart('${key}')">Remove</button>
+          </div>
+          <div class="di-price">${fmtINR(lineTotal)}</div>
+        </div>`;
+      }).join('');
+      sendBtn.disabled = false;
+    }
+    const total = keys.reduce((sum,key)=> sum + cart[key].qty * cart[key].price, 0);
+    document.getElementById('drawerTotal').textContent = fmtINR(total);
+  }
+
+  function openDrawer(){
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeDrawer(){
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  function cartTotal(){
+    return Object.keys(cart).reduce((sum,key)=> sum + cart[key].qty * cart[key].price, 0);
+  }
+
+  function goToPayment(){
+    const keys = Object.keys(cart);
+    if(keys.length === 0) return;
+    const total = cartTotal();
+    document.getElementById('cartStep').style.display = 'none';
+    document.getElementById('paymentStep').style.display = 'block';
+    document.getElementById('payTotal').textContent = fmtINR(total);
+    document.getElementById('upiIdShown').value = UPI_ID;
+    const upiString = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${total}&cu=INR&tn=${encodeURIComponent('VPR Fresh Farm Order')}`;
+    document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiString)}`;
+    document.getElementById('upiPayBtn').href = upiString;
+  }
+
+  function backToCart(){
+    document.getElementById('paymentStep').style.display = 'none';
+    document.getElementById('cartStep').style.display = 'block';
+  }
+
+  function saveOrderLocally(order){
+    const key = 'vprOrders';
+    let orders = [];
+    try{ orders = JSON.parse(localStorage.getItem(key)) || []; }catch(e){ orders = []; }
+    orders.push(order);
+    localStorage.setItem(key, JSON.stringify(orders));
+  }
+
+  function confirmAndSend(){
+    const name = document.getElementById('custName').value.trim();
+    const address = document.getElementById('custAddress').value.trim();
+    const keys = Object.keys(cart);
+    if(keys.length === 0) return;
+    const total = cartTotal();
+
+    // Save order to this browser's local storage
+    const order = {
+      id: 'ORD' + Date.now(),
+      timestamp: new Date().toISOString(),
+      name: name || '(not provided)',
+      address: address || '(not provided)',
+      items: keys.map(key => ({
+        name: cart[key].name,
+        variant: cart[key].variant || '',
+        qty: cart[key].qty,
+        price: cart[key].price,
+        lineTotal: cart[key].qty * cart[key].price
+      })),
+      total: total,
+      paymentMethod: 'UPI'
+    };
+    saveOrderLocally(order);
+
+    // Build WhatsApp message
+    let msg = `Hi VPR Fresh Farm, I'd like to place an order:\n\n`;
+    keys.forEach(key=>{
+      const it = cart[key];
+      msg += `• ${it.name}${it.variant ? ' ('+it.variant+')' : ''} — ${it.qty} kg\n`;
+    });
+    msg += `\nTotal: ${fmtINR(total)}`;
+    msg += `\nPayment: UPI (${UPI_ID})`;
+    if(name) msg += `\nName: ${name}`;
+    if(address) msg += `\nAddress: ${address}`;
+    msg += `\nOrder ID: ${order.id}`;
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+
+    // Reset cart
+    Object.keys(cart).forEach(k => delete cart[k]);
+    updateCartUI();
+    backToCart();
+    closeDrawer();
+  }
+
+  renderProducts();
+  updateCartUI();
+</script>
+
+</body>
+</html>
